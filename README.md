@@ -1,12 +1,6 @@
-# \*\*\*项目
+# xushu-axios
 
-    \*\*\*项目
-
-## Develop
-
-```shell
-yarn && yarn dev
-```
+基于 axios 的简单封装
 
 # git commit rules
 
