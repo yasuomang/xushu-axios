@@ -16,13 +16,20 @@ type httpMethod =
   | "put"
   | "patch";
 interface HttpRequestInstance {
-  get(url: string, params?: AxiosRequestConfig): Promise<AxiosResponse>;
-  delete(url: string, params?: AxiosRequestConfig): Promise<AxiosResponse>;
-  put(url: string, params?: AxiosRequestConfig): Promise<AxiosResponse>;
-  post(url: string, params?: AxiosRequestConfig): Promise<AxiosResponse>;
-  options(url: string, params?: AxiosRequestConfig): Promise<AxiosResponse>;
-  head(url: string, params?: AxiosRequestConfig): Promise<AxiosResponse>;
-  patch(url: string, params?: AxiosRequestConfig): Promise<AxiosResponse>;
+  get(url: string, params?: unknown): Promise<AxiosResponse>;
+  delete(url: string, params?: unknown): Promise<AxiosResponse>;
+  put(url: string, params?: unknown): Promise<AxiosResponse>;
+  post(url: string, params?: unknown): Promise<AxiosResponse>;
+  options(url: string, params?: unknown): Promise<AxiosResponse>;
+  head(url: string, params?: unknown): Promise<AxiosResponse>;
+  patch(url: string, params?: unknown): Promise<AxiosResponse>;
+}
+export interface apiResponse<T> {
+  code: number;
+  data: T;
+  msg: string;
+  time: number;
+  total?: number;
 }
 export class HttpRequest {
   private HttpRequestInstance!: HttpRequestInstance;
@@ -30,13 +37,10 @@ export class HttpRequest {
   constructor(http: AxiosInstance) {
     this.methods = ["get", "delete", "put", "post", "options", "head", "patch"];
     this.methods.forEach((method: httpMethod) => {
-      this.HttpRequestInstance[method] = (
-        url: string,
-        params: AxiosRequestConfig
-      ) => {
+      this.HttpRequestInstance[method] = (url: string, params: unknown) => {
         const PARAMS =
           ["get", "delete"].indexOf(method) > -1 ? { params } : params;
-        return http[method](url, PARAMS);
+        return http[method](url, PARAMS as AxiosRequestConfig<unknown>);
       };
     });
   }

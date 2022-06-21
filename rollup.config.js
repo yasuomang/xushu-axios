@@ -2,10 +2,9 @@ import resolve from "@rollup/plugin-node-resolve";
 import typescript from "@rollup/plugin-typescript";
 import commonjs from "@rollup/plugin-commonjs";
 import { terser } from "rollup-plugin-terser";
+import pkg from "./package.json";
 export default {
   input: "src/index.ts",
-  plugins: [resolve(), typescript(), commonjs(), terser()],
-  external: ["axios", "js-cookie"],
   output: [
     {
       dir: "dist",
@@ -24,4 +23,6 @@ export default {
       name: "bundleName",
     },
   ],
+  external: [...Object.keys(pkg.peerDependencies)],
+  plugins: [resolve(), commonjs(), typescript(), terser()],
 };

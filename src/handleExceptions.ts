@@ -1,12 +1,5 @@
 import Cookies from "js-cookie";
 import { AxiosResponse, AxiosError } from "axios";
-export interface apiResponse<T> {
-  code: number;
-  data: T;
-  msg: string;
-  time: number;
-  total?: number;
-}
 // 处理异常
 export const handleError = (res: AxiosResponse | AxiosError) =>
   new Promise((resolve, reject) => {
