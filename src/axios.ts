@@ -6,7 +6,13 @@ import axios, {
   AxiosError,
 } from "axios";
 import { handleError } from "./handleExceptions";
-
+export interface apiResponse<T> {
+  code: number;
+  data: T;
+  msg: string;
+  time: number;
+  total?: number;
+}
 type httpMethod =
   | "get"
   | "delete"
@@ -16,31 +22,25 @@ type httpMethod =
   | "put"
   | "patch";
 interface HttpRequestInstance {
-  get(url: string, params?: unknown): Promise<AxiosResponse>;
-  delete(url: string, params?: unknown): Promise<AxiosResponse>;
-  put(url: string, params?: unknown): Promise<AxiosResponse>;
-  post(url: string, params?: unknown): Promise<AxiosResponse>;
-  options(url: string, params?: unknown): Promise<AxiosResponse>;
-  head(url: string, params?: unknown): Promise<AxiosResponse>;
-  patch(url: string, params?: unknown): Promise<AxiosResponse>;
-}
-export interface apiResponse<T> {
-  code: number;
-  data: T;
-  msg: string;
-  time: number;
-  total?: number;
+  get<T, D>(url: string, params?: D): Promise<apiResponse<T>>;
+  delete<T, D>(url: string, params?: D): Promise<apiResponse<T>>;
+  put<T, D>(url: string, params?: D): Promise<apiResponse<T>>;
+  post<T, D>(url: string, params?: D): Promise<apiResponse<T>>;
+  options<T, D>(url: string, params?: D): Promise<apiResponse<T>>;
+  head<T, D>(url: string, params?: D): Promise<apiResponse<T>>;
+  patch<T, D>(url: string, params?: D): Promise<apiResponse<T>>;
 }
 export class HttpRequest {
-  private HttpRequestInstance!: HttpRequestInstance;
+  private HttpRequestInstance: HttpRequestInstance;
   private methods: httpMethod[];
   constructor(http: AxiosInstance) {
     this.methods = ["get", "delete", "put", "post", "options", "head", "patch"];
+    this.HttpRequestInstance = {} as HttpRequestInstance;
     this.methods.forEach((method: httpMethod) => {
-      this.HttpRequestInstance[method] = (url: string, params: unknown) => {
+      this.HttpRequestInstance[method] = (url, params) => {
         const PARAMS =
           ["get", "delete"].indexOf(method) > -1 ? { params } : params;
-        return http[method](url, PARAMS as AxiosRequestConfig<unknown>);
+        return http[method](url, PARAMS);
       };
     });
   }
@@ -63,32 +63,41 @@ export class Http {
     if (axiosInstance) {
       this.Axios = axiosInstance;
     } else {
-      this.Axios.interceptors.request.use(
-        (config: AxiosRequestConfig) => {
-          if (config.headers) {
-            config.headers["authentication"] = Cookies.get("token") || "";
-          }
-          return config;
-        },
-        (error: AxiosError) => {
-          return Promise.reject(error);
-        }
-      );
-      this.Axios.interceptors.response.use(
-        (result: AxiosResponse) => {
-          return handleError(result);
-        },
-        (error: AxiosError) => {
-          return handleError(error);
-        }
-      );
+      this.setRequestInterceptors();
+      this.setResponseInterceptors();
     }
   }
+
+  setRequestInterceptors() {
+    this.Axios.interceptors.request.use(
+      (config: AxiosRequestConfig) => {
+        if (config.headers) {
+          config.headers["authentication"] = Cookies.get("token") || "";
+        }
+        return config;
+      },
+      (error: AxiosError) => {
+        return Promise.reject(error);
+      }
+    );
+  }
+
+  setResponseInterceptors() {
+    this.Axios.interceptors.response.use(
+      (result: AxiosResponse) => {
+        return handleError(result);
+      },
+      (error: AxiosError) => {
+        return handleError(error);
+      }
+    );
+  }
+
   get axiosInstance() {
     return this.Axios;
   }
 
-  get requestMethod() {
+  get getRequestMethod() {
     return new HttpRequest(this.Axios).requestMethod;
   }
 }
