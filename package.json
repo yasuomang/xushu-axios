@@ -1,0 +1,53 @@
+{
+  "name": "@m-xushu/axios",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./dist/index.cjs.js",
+  "module": "./dist/index.esm.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "yarn clean && rollup -w -c",
+    "build": "yarn clean && rollup -c",
+    "clean": "rm -rf dist",
+    "lint": "eslint . --ext .js,.ts --fix",
+    "prepare": "husky install"
+  },
+  "keywords": [
+    "axios"
+  ],
+  "author": "miaocunhui",
+  "license": "ISC",
+  "devDependencies": {
+    "@commitlint/cli": "^17.0.2",
+    "@commitlint/config-conventional": "^17.0.2",
+    "@rollup/plugin-commonjs": "^22.0.0",
+    "@rollup/plugin-node-resolve": "^13.3.0",
+    "@rollup/plugin-typescript": "^8.3.3",
+    "@types/js-cookie": "^3.0.2",
+    "@typescript-eslint/eslint-plugin": "^5.28.0",
+    "@typescript-eslint/parser": "^5.28.0",
+    "eslint": "^8.17.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "husky": "^8.0.1",
+    "lint-staged": "^13.0.1",
+    "prettier": "^2.7.1",
+    "rollup": "^2.75.6",
+    "rollup-plugin-terser": "^7.0.2",
+    "typescript": "^4.7.3"
+  },
+  "lint-staged": {
+    "*.{js,ts}": [
+      "prettier --write",
+      "eslint --fix"
+    ],
+    "*.{html,css,md}": [
+      "prettier --write"
+    ]
+  },
+  "peerDependencies": {
+    "axios": "^0.27.2",
+    "js-cookie": "^3.0.1"
+  }
+}
