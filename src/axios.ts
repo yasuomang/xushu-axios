@@ -1,11 +1,11 @@
-import Cookies from "js-cookie";
+import Cookies from 'js-cookie';
 import axios, {
   AxiosInstance,
   AxiosRequestConfig,
   AxiosResponse,
   AxiosError,
-} from "axios";
-import { handleError } from "./handleExceptions";
+} from 'axios';
+import { handleError } from './handleExceptions';
 export interface apiResponse<T> {
   code: number;
   data: T;
@@ -14,13 +14,13 @@ export interface apiResponse<T> {
   total?: number;
 }
 type httpMethod =
-  | "get"
-  | "delete"
-  | "head"
-  | "options"
-  | "post"
-  | "put"
-  | "patch";
+  | 'get'
+  | 'delete'
+  | 'head'
+  | 'options'
+  | 'post'
+  | 'put'
+  | 'patch';
 interface HttpRequestInstance {
   get<T, D>(url: string, params?: D): Promise<apiResponse<T>>;
   delete<T, D>(url: string, params?: D): Promise<apiResponse<T>>;
@@ -34,12 +34,12 @@ export class HttpRequest {
   private HttpRequestInstance: HttpRequestInstance;
   private methods: httpMethod[];
   constructor(http: AxiosInstance) {
-    this.methods = ["get", "delete", "put", "post", "options", "head", "patch"];
+    this.methods = ['get', 'delete', 'put', 'post', 'options', 'head', 'patch'];
     this.HttpRequestInstance = {} as HttpRequestInstance;
     this.methods.forEach((method: httpMethod) => {
       this.HttpRequestInstance[method] = (url, params) => {
         const PARAMS =
-          ["get", "delete"].indexOf(method) > -1 ? { params } : params;
+          ['get', 'delete'].indexOf(method) > -1 ? { params } : params;
         return http[method](url, PARAMS);
       };
     });
@@ -57,7 +57,7 @@ export class Http {
   private Axios: AxiosInstance;
   constructor(axiosInstance?: AxiosInstance) {
     this.Axios = axios.create({
-      baseURL: "/api",
+      baseURL: '/api',
       timeout: 120000,
     });
     if (axiosInstance) {
@@ -72,7 +72,7 @@ export class Http {
     this.Axios.interceptors.request.use(
       (config: AxiosRequestConfig) => {
         if (config.headers) {
-          config.headers["authentication"] = Cookies.get("token") || "";
+          config.headers['authentication'] = Cookies.get('token') || '';
         }
         return config;
       },
